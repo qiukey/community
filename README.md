@@ -12,3 +12,16 @@
 [Visual Paradigm](https://www.visual-paradigm.com)
 
 [OkHttp](https://square.github.io/okhttp/)
+
+## 脚本
+```sql
+CREATE TABLE USER(
+    ID INT AUTO_INCREMENT PRIMARY KEY NOT NULL ,
+    ACCOUNT_ID VARCHAR(100),
+    NAME VARCHAR(50),
+    TOKEN CHAR(36),
+    GMT_CREATE BIGINT,
+    GMT_MODIFIED BIGINT
+);
+
+```

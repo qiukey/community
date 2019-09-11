@@ -7,3 +7,10 @@ github:
     secret: 01c9483974f8034420584e4d3f9b82aff403975a
   redirect:
     uri: http://localhost:8887/callback
+
+spring:
+  datasource:
+    url: jdbc:h2:~/h2community
+    username: root
+    password: qiukai123
+    driver-class-name: org.h2.Driver
