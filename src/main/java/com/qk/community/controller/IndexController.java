@@ -1,14 +1,14 @@
 package com.qk.community.controller;
 
-import com.qk.community.mapper.UserMapper;
-import com.qk.community.model.User;
+import com.qk.community.dto.PaginationDTO;
+ import com.qk.community.mapper.UserMapper;
+import com.qk.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
@@ -21,22 +21,15 @@ public class IndexController {
     }
 
     @Autowired
-    private UserMapper userMapper;
+    private QuestionService questionService;
     @GetMapping("/")
-    public String index(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie:cookies) {
-                if (cookie.getName().equals("token")) {
-                    String token = cookie.getValue();
-                    User user = userMapper.findByToken(token);
-                    if (user != null) {
-                        request.getSession().setAttribute("user", user);
-                    }
-                    break;
-                }
-            }
-        }
+    public String index(HttpServletRequest request,
+                        @RequestParam(name = "page", defaultValue = "1") Integer page,
+                        @RequestParam(name = "size", defaultValue = "5") Integer size,
+                        Model model) {
+
+        PaginationDTO paginationDTO = questionService.list(page, size);
+        model.addAttribute("paginationDTO", paginationDTO);
         return "index";
     }
 }

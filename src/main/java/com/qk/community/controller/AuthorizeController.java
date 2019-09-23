@@ -2,9 +2,9 @@ package com.qk.community.controller;
 
 import com.qk.community.dto.AccessTokenDTO;
 import com.qk.community.dto.GithubUser;
-import com.qk.community.mapper.UserMapper;
 import com.qk.community.model.User;
 import com.qk.community.provider.GithubProvider;
+import com.qk.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -27,9 +27,8 @@ public class AuthorizeController {
     private String clientSecret;
     @Value("${github.redirect.uri}")
     private String redirectUri;
-
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
@@ -44,16 +43,15 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken);
 
-        if (githubUser != null) {
+        if (githubUser != null && githubUser.getId() != null) {
             System.out.println("================================登录成功==============================");
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
-            userMapper.insert(user);
+            user.setAvatarUrl(githubUser.getAvatarUrl());
+            userService.createOrUpdate(user);
 
             response.addCookie(new Cookie("token", token));
             return "redirect:/";
